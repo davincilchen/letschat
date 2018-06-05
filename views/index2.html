@@ -22,5 +22,11 @@
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
+
+    <script>
+      var name = "guest"
+      //tell server
+      socket.emit("add user",name);
+    </script>
   </body>
 </html>
