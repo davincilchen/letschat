@@ -1,26 +1,32 @@
+/*
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+*/
+
 const express = require('express');
 const app = express();
 
-const server = require('http').Server(app); //require('http').createServer(onRequest).listen(port, ip);
-const io = require('socket.io')(server);
+const http = require('http').Server(app); //require('http').createServer(onRequest).listen(port, ip);
+const io = require('socket.io')(http);
 
  
 app.get('/', (req, res) => {
   res.sendFile( __dirname + '/views/index.html');
 });
 
-io.on('connection', (socket) => {
-  console.log('socket connect!');
+io.on('connection', function(socket){
+  console.log('a user connected');
  
-  socket.on("greet", () => {
-    socket.emit("greet", "greet response.");
-  });
+  socket.on("greet", function(){
+        socket.emit("greet", "Hi! Client.");
+    });
 
-  socket.on('disconnect', () => {
-    console.log('socket disconnect');
+  socket.on('disconnect', function(){
+    console.log('a user disconnect');
   });
 });
 
-app.listen(3000, () => {
-  console.log("Server Started. http://localhost:3000");
+http.listen(3000, () => { //use http.listen to replace app app.listen
+  console.log('listening on *:3000');
 });
