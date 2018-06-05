@@ -32,6 +32,14 @@ io.on('connection', function(socket){
     });
   });
 
+  socket.on('chat message', function(msg){
+    console.log(socket.username+":"+msg);
+    io.emit('chat message', {
+      username:socket.username,
+      msg:msg
+    });
+  });
+
   socket.on('disconnect',function(){
     console.log('a user disconnect');
     if(socket.username !== undefined){

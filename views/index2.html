@@ -13,20 +13,64 @@
       #messages li:nth-child(odd) { background: #eee; }
     </style>
       <script src="/socket.io/socket.io.js"></script>
+      <script src="http://code.jquery.com/jquery-1.11.1.js"></script> <!-- for $-->
     <script>
       var socket = io();
     </script>
   </head>
   <body>
-    <ul id="messages"></ul>
+    <div id="message_block">
+      <ul id="messages"></ul>
+    </div>
     <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+      <input id="m" autocomplete="off" /><button id="send">Send</button>
     </form>
 
     <script>
-      var name = "guest"
-      //tell server
-      socket.emit("add user",name);
+      var socket = io();
+      $(document).ready(function(){
+
+        var name = prompt("請輸入暱稱","guest");
+
+        if(name=="" || name==null){
+          name = "guest";
+        }
+
+        //tell server
+        socket.emit("add user",name);
+
+        socket.on('chat message', function(data){
+          appendMessage(data.username+":"+data.msg);
+        });
+
+        socket.on('add user',function(data){
+          appendMessage(data.username+"已加入");
+        });
+
+        socket.on('user left',function(data){
+          appendMessage(data.username+"已離開");
+        });
+
+        $('#send').click(function(){
+          var text = $('#m').val();
+          socket.emit('chat message', text);
+          $('#m').val('');
+          return false;
+        });
+
+        $("#m").keydown(function(event){
+          if ( event.which == 13 ){
+            $('#send').click();
+          }
+        });
+
+        function appendMessage(msg){
+          $('#messages').append($('<li>').text(msg));
+          var message = document.getElementById("message_block");
+          message.scrollTop = message.scrollHeight;
+        }
+      });
+
     </script>
   </body>
 </html>
