@@ -12,6 +12,9 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log('socket connect!');
  
+  socket.on("greet", () => {
+    socket.emit("greet", "greet response.");
+  });
 
   socket.on('disconnect', () => {
     console.log('socket disconnect');
